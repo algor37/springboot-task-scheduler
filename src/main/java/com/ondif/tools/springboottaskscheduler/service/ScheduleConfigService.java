@@ -44,7 +44,6 @@ public class ScheduleConfigService implements SchedulingConfigurer {
     private CoffeeScheduler coffeeScheduler;
 
     private void initialize() {
-        LOG.info("initialize -----------------------------------");
         this.teaFutureInfo = new FutureInfo(teaScheduler);
         this.coffeeFutureInfo = new FutureInfo(coffeeScheduler);        
     }
@@ -62,28 +61,22 @@ public class ScheduleConfigService implements SchedulingConfigurer {
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 
-        LOG.info("[configureTasks] ------------------------10");
         if (scheduledTaskRegistrar == null) {
-            LOG.info("[configureTasks] ------------------------20");
             scheduledTaskRegistrar = taskRegistrar;
         }
         if (taskRegistrar.getScheduler() == null) {
-            LOG.info("[configureTasks] ------------------------30");
             taskRegistrar.setScheduler(poolScheduler());
         }
         
-        logFutureInfoMap("1111111");
-        LOG.info("[configureTasks] ------------------------40");
+        logFutureInfoMap("configuration tea task scheduler");
         if (teaFutureInfo.getFuture() == null || (teaFutureInfo.getFuture().isCancelled() && teaFutureInfo.isActive() == true)) {
-            LOG.info("[configureTasks] ------------------------41");
             ScheduledFuture future1 = scheduledTaskRegistrar.getScheduler().schedule(() -> teaScheduler.getTask(), t -> {
                 Optional<Date> lastCompletionTime = Optional.ofNullable(t.lastCompletionTime());
                 Instant nextExecutionTime = lastCompletionTime.orElseGet(Date::new).toInstant().plusMillis(teaScheduler.getDelayMilliSec());
                 return Date.from(nextExecutionTime);
             });
             if (teaFutureInfo.getFuture() == null) {
-                // 처음인 경우에는 중지 상태를 유지한다.
-                LOG.info("[configureTasks] first call method. ---- 45");
+                // first , cancel state
                 future1.cancel(true);
             }
             teaFutureInfo.setFuture(future1);
@@ -91,19 +84,16 @@ public class ScheduleConfigService implements SchedulingConfigurer {
             futureInfoMap.put(teaFutureInfo.getKey(), teaFutureInfo);
         }
 
-        logFutureInfoMap("2222222");
+        logFutureInfoMap("configuration coffe task scheduler");
 
-        LOG.info("[configureTasks] ------------------------50");
         if (coffeeFutureInfo.getFuture() == null || (coffeeFutureInfo.getFuture().isCancelled() && coffeeFutureInfo.isActive() == true)) {
-            LOG.info("[configureTasks] ------------------------51");
             ScheduledFuture future2 = scheduledTaskRegistrar.getScheduler().schedule(() -> coffeeScheduler.getTask(), t -> {
                 Optional<Date> lastCompletionTime = Optional.ofNullable(t.lastCompletionTime());
                 Instant nextExecutionTime = lastCompletionTime.orElseGet(Date::new).toInstant().plusMillis(coffeeScheduler.getDelayMilliSec());
                 return Date.from(nextExecutionTime);
             });
             if (coffeeFutureInfo.getFuture() == null) {
-                // 처음인 경우에는 중지 상태를 유지한다.
-                LOG.info("[configureTasks] first call method.------55");
+                // first, cancel state
                 future2.cancel(true);
             }
             
@@ -116,20 +106,19 @@ public class ScheduleConfigService implements SchedulingConfigurer {
                 LOG.info("active state");
             }
         }
-        logFutureInfoMap("3333333");
 
     }
 
 
     public boolean jobControl(String jobName, boolean isActive) {
-        LOG.info("[jobControl] 추가할 스캐쥴러 name:[{}]", jobName);
+        LOG.info("[jobControl] add scheduler name:[{}]", jobName);
 
         for (String key : futureInfoMap.keySet()) {
             LOG.info("[jobControl] futureInfoMap key:[{}]", key);
         }
 
         if (futureInfoMap.get(jobName) == null) {
-            LOG.error("[jobControl] futureInfoMap에서 name:{} 를 찾지 못함.", jobName);
+            LOG.error("[jobControl] futureInfoMap name:{} not found.", jobName);
             return false;
         }
         
@@ -144,7 +133,6 @@ public class ScheduleConfigService implements SchedulingConfigurer {
 
     private void logFutureInfoMap(String title) {
         LOG.info("[logFutureInfoMap] {} --------------------------------------", title);
-        LOG.info("[logFutureInfoMap] futureInfoMap count: {} -----------------", futureInfoMap.size());
     
         for (String key : futureInfoMap.keySet()) {
             LOG.info("[logFutureInfoMap] key:{}", key);
@@ -153,9 +141,9 @@ public class ScheduleConfigService implements SchedulingConfigurer {
                 LOG.info("[logFutureInfoMap] key:{}, FutureInfo is null", key);
             } else {
                 if (tfutureInfo.getFuture().isCancelled()) {
-                    LOG.info("[logFutureInfoMap] key:{}, FutureInfo is 중지.", key);
+                    LOG.info("[logFutureInfoMap] key:{}, FutureInfo is cancelled.", key);
                 } else {
-                    LOG.info("[logFutureInfoMap] key:{}, FutureInfo is 동작.", key);
+                    LOG.info("[logFutureInfoMap] key:{}, FutureInfo is activated.", key);
                 }
             }
         }
@@ -170,12 +158,12 @@ public class ScheduleConfigService implements SchedulingConfigurer {
         }
 
         if (futureInfo.getFuture().isCancelled()) {
-            LOG.info("[cancelJob] 중지중... 동작요청 시작");
+            LOG.info("[cancelJob] cancelled... request active");
             futureInfo.setActive(true);
             configureTasks(scheduledTaskRegistrar);
             return true;
         } else {
-            LOG.warn("현재 중지 중이 아니다!!!!");
+            LOG.warn("current activated!!!!");
         }
         return false;
     }
@@ -195,13 +183,13 @@ public class ScheduleConfigService implements SchedulingConfigurer {
             return false;
         }
         if (!futureInfo.getFuture().isCancelled()) {
-            LOG.info("[cancelJob] 동작중... 중지요청 시작");
+            LOG.info("[cancelJob] activated... request cancel");
             futureInfo.getFuture().cancel(true);
             futureInfo.setActive(false);
             configureTasks(scheduledTaskRegistrar);
             return true;
         } else {
-            LOG.warn("현재 동작 중이 아니다!!!!");
+            LOG.warn("current activated!!!!");
         }
         return false;
     }
