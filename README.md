@@ -35,6 +35,20 @@ git clone https://github.com/algor37/springboot-task-scheduler
 
 ```
 
+## TEST
+1. add items
+
+![the picture](temp/add_item.png)
+
+
+2. add coffee scheduler
+
+![the picture](temp/add_coffee_scheduler.png)
+
+2. remove coffee scheduler
+
+![the picture](temp/remove_coffee_scheduler.png)
+
 
 # ToDo List
 - [ ] [프로젝트설정] xxx : 2022.xx.xx 
@@ -44,13 +58,13 @@ git clone https://github.com/algor37/springboot-task-scheduler
 
 ```
 - 2022.06.04
-        1. 프로젝트 생성.
-        2. v0.0.1 버전 발행.
+        1. 프로젝트 생성.(create project)
+        2. v0.0.1 release.
 
 ```
 
 ### Release
-- v0.0.1 https://github.com/algor37/ondif-push-admin/releases/tag/v0.0.1
+- v0.0.1 https://github.com/algor37/springboot-task-scheduler/releases/tag/v0.0.1
 
 
 ## Copyright and license

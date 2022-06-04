@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: "common-public"
+publiceinfo:
+  filedirname: repo
+  userid: 'test'
+  username: 'test user'
+  email: 'test@gmail.com'
+  detailinfo:
+    userid: ${publiceinfo.userid}
+    number: +82-10-1234-5678
+    address: '경기도 성남시 판교'
+    iteminfo:
+      name: 'test item'
+      serialnumber: '111-222-333'
+      price: 10000
+
+      

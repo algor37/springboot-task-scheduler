@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SpringbootTaskSchedulerApplication<springboot-task-scheduler>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ondif.tools.springboottaskscheduler.SpringbootTaskSchedulerApplication",
+            "projectName": "springboot-task-scheduler",
+            "args": "--spring.profiles.active=dev",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
