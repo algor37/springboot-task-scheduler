@@ -15,9 +15,9 @@ import com.ondif.tools.springboottaskscheduler.service.SyncCoffeeService;
 public class CoffeeScheduler implements CommScheduler {
 
     private boolean active = false;
-    private long delay = 200; // milli second
     private final String KEYNAME = "COFFEE";
-    private final int MAX_JOB_COUNT = 20;
+    private int maxCount = 10;
+    private int delay = 1000; // milli second
 
     private final Logger LOG = LoggerFactory.getLogger(CoffeeScheduler.class);
 
@@ -35,6 +35,8 @@ public class CoffeeScheduler implements CommScheduler {
     ) {
         this.syncItemService = syncItemService;
         this.publicProp = publicProp;
+        this.maxCount = publicProp.getSchedulerinfo().getMaxcount();
+        this.delay = publicProp.getSchedulerinfo().getDelay();
     }
 
 
@@ -56,12 +58,12 @@ public class CoffeeScheduler implements CommScheduler {
         LOG.info("[CoffeeScheduler] schedule tasks with dynamic delay - " + now);
 
         int syncCount = syncItemService.syncCoffeeItem();
-        LOG.info("[SyncGwEdmsInfo] ----- sync item counter: {}", syncCount);
+        LOG.info("[CoffeeScheduler] ----- sync item counter: {}", syncCount);
         // private ScheduleConfigService scheduleConfigService;
 
-        LOG.info("[SyncGwEdmsInfo] ----- Run Job Counter: {}", this.publicProp.getCoffeeSyncJobCounter());
+        LOG.info("[CoffeeScheduler] ----- Run Job Counter: {}", this.publicProp.getCoffeeSyncJobCounter());
         this.publicProp.setCoffeeSyncJobCounter(this.publicProp.getCoffeeSyncJobCounter()+1);
-        if (this.publicProp.getCoffeeSyncJobCounter() > MAX_JOB_COUNT) {
+        if (this.publicProp.getCoffeeSyncJobCounter() > maxCount) {
             ScheduleConfigService scheduleConfigService = context.getBean(ScheduleConfigService.class);
             scheduleConfigService.jobControl(KEYNAME, false);
         }

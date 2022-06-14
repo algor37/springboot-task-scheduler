@@ -28,6 +28,7 @@ public class PublicInfoProperties {
     private String      userid;
     private String      username;
     private String      email;
+    private SchedulerInfo schedulerinfo = new SchedulerInfo();
     private DetailInfo  detailinfo = new DetailInfo();
 
     private int         coffeeSyncJobCounter;
@@ -38,10 +39,21 @@ public class PublicInfoProperties {
 
     @PostConstruct
     public void init() {
+        LOG.info("PublicInfoProperties: {}", this.toString());
         coffeeSyncJobCounter = 0;
         teaSyncJobCounter = 0;
     }
 
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Validated
+    public class SchedulerInfo {
+        private int delay;
+        private int maxcount;
+    }
 
     @Getter
     @Setter
@@ -51,14 +63,8 @@ public class PublicInfoProperties {
     @Validated
     public class DetailInfo {
         private String userid;
-        private String regnumber;
-        private String regname;
-        private String regaddr;
-        private String regtel;
-        private String regemail;
-        private String regpartname;
-        private String certtype;
-        private String certinfo;
+        private String number;
+        private String address;
         private ItemInfo iteminfo = new ItemInfo();
 
         @Getter

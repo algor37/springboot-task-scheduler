@@ -15,9 +15,9 @@ import com.ondif.tools.springboottaskscheduler.service.SyncTeaService;
 public class TeaScheduler implements CommScheduler {
 
     private boolean active = false;
-    private long delay = 200; // milli second
     private final String KEYNAME = "TEA";
-    private final int MAX_JOB_COUNT = 20;
+    private int maxCount = 10;
+    private int delay = 1000; // milli second
 
     
     private final Logger LOG = LoggerFactory.getLogger(TeaScheduler.class);
@@ -36,6 +36,8 @@ public class TeaScheduler implements CommScheduler {
     ) {
         this.syncTeaService = syncTeaService;
         this.publicProp = publicProp;
+        this.maxCount = publicProp.getSchedulerinfo().getMaxcount();
+        this.delay = publicProp.getSchedulerinfo().getDelay();
     }
 
 
@@ -61,7 +63,7 @@ public class TeaScheduler implements CommScheduler {
   
           LOG.info("[TeaScheduler] ----- Run Job Counter: {}", this.publicProp.getTeaSyncJobCounter());
           this.publicProp.setTeaSyncJobCounter(this.publicProp.getTeaSyncJobCounter()+1);
-          if (this.publicProp.getTeaSyncJobCounter() > MAX_JOB_COUNT) {
+          if (this.publicProp.getTeaSyncJobCounter() > maxCount) {
               ScheduleConfigService scheduleConfigService = context.getBean(ScheduleConfigService.class);
               scheduleConfigService.jobControl(KEYNAME, false);
           }
