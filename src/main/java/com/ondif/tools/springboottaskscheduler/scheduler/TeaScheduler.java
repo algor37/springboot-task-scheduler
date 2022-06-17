@@ -84,4 +84,8 @@ public class TeaScheduler implements CommScheduler {
         this.active = active;
     }
 
+    @Override
+    public void resetCount() {
+        this.publicProp.setTeaSyncJobCounter(0);
+    }
 }

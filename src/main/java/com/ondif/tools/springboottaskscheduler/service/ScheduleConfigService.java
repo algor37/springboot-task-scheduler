@@ -19,6 +19,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Service;
 
+import com.ondif.tools.springboottaskscheduler.configuration.PublicInfoProperties;
 import com.ondif.tools.springboottaskscheduler.scheduler.CoffeeScheduler;
 import com.ondif.tools.springboottaskscheduler.scheduler.FutureInfo;
 import com.ondif.tools.springboottaskscheduler.scheduler.TeaScheduler;
@@ -42,6 +43,9 @@ public class ScheduleConfigService implements SchedulingConfigurer {
 
     @Autowired
     private CoffeeScheduler coffeeScheduler;
+
+    @Autowired
+    private PublicInfoProperties publicProp;
 
     private void initialize() {
         this.teaFutureInfo = new FutureInfo(teaScheduler);
@@ -82,6 +86,7 @@ public class ScheduleConfigService implements SchedulingConfigurer {
             teaFutureInfo.setFuture(future1);
             LOG.info("[configureTasks] tickFutureInfo key:{}", teaFutureInfo.getKey());
             futureInfoMap.put(teaFutureInfo.getKey(), teaFutureInfo);
+            this.publicProp.setTeaSyncJobCounter(0);
         }
 
         logFutureInfoMap("configuration coffe task scheduler");
@@ -100,6 +105,7 @@ public class ScheduleConfigService implements SchedulingConfigurer {
             coffeeFutureInfo.setFuture(future2);
             LOG.info("[configureTasks] coffeeFutureInfo key:{}", coffeeFutureInfo.getKey());
             futureInfoMap.put(coffeeFutureInfo.getKey(), coffeeFutureInfo);
+            this.publicProp.setCoffeeSyncJobCounter(0);
             if (futureInfoMap.get(coffeeFutureInfo.getKey()).getFuture().isCancelled()) {
                 LOG.info("cancel state");
             } else {
@@ -164,6 +170,7 @@ public class ScheduleConfigService implements SchedulingConfigurer {
             return true;
         } else {
             LOG.warn("current activated!!!!");
+            futureInfo.getService().resetCount();
         }
         return false;
     }

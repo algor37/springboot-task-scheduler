@@ -7,6 +7,9 @@ publiceinfo:
   userid: 'test'
   username: 'test user'
   email: 'test@gmail.com'
+  schedulerinfo:
+    delay: 5000 # milli sec
+    maxcount: 20 # scheduler max count
   detailinfo:
     userid: ${publiceinfo.userid}
     number: +82-10-1234-5678
@@ -15,5 +18,3 @@ publiceinfo:
       name: 'test item'
       serialnumber: '111-222-333'
       price: 10000
-
-      

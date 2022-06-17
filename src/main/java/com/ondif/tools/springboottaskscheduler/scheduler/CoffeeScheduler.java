@@ -85,4 +85,8 @@ public class CoffeeScheduler implements CommScheduler {
         this.active = active;
     }
 
+    @Override
+    public void resetCount() {
+        this.publicProp.setCoffeeSyncJobCounter(0);
+    }
 }

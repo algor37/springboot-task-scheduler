@@ -28,4 +28,7 @@ public class FutureInfo {
         this.service.setActive(active);;
     }
 
+    public CommScheduler getService() {
+        return this.service;
+    }
 }
